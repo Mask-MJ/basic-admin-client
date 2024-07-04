@@ -11,42 +11,18 @@
  * @doc https://umijs.org/docs/guides/routes
  */
 export default [
+  { path: '/login', name: 'login', layout: false, component: './Login' },
+  { path: '/home', name: 'home', icon: 'smile', component: './Home' },
   {
-    path: '/login',
-    name: 'login',
-    layout: false,
-    component: './Login',
-  },
-  {
-    path: '/welcome',
-    name: 'welcome',
-    icon: 'smile',
-    component: './Welcome',
-  },
-  {
-    path: '/admin',
-    name: 'admin',
-    icon: 'crown',
-    // access: 'canAdmin',
+    path: '/system',
+    name: 'system',
+    icon: 'setting',
     routes: [
-      {
-        path: '/admin',
-        redirect: '/admin/sub-page',
-      },
-      {
-        path: '/admin/sub-page',
-        name: 'sub-page',
-        component: './Admin',
-      },
+      { path: '/system', redirect: '/system/user' },
+      { path: '/system/user', name: 'user', component: './System/User' },
+      { path: '/system/menu', name: 'menu', component: './System/Menu' },
     ],
   },
-  {
-    path: '/',
-    redirect: '/welcome',
-  },
-  {
-    path: '*',
-    layout: false,
-    component: './404',
-  },
+  { path: '/', redirect: '/home' },
+  { path: '*', layout: false, component: './404' },
 ];
