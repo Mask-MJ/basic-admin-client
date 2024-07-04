@@ -1,14 +1,12 @@
-import { Footer } from '@/components';
 import { authenticationControllerSignIn } from '@/services/basic/denglurenzheng';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { LoginForm, ProFormText } from '@ant-design/pro-components';
 import { FormattedMessage, history, SelectLang, useIntl, useModel, Helmet } from '@umijs/max';
 import { message } from 'antd';
-import Settings from '../../../../config/defaultSettings';
+import Settings from '../../../config/defaultSettings';
 import React from 'react';
 import { flushSync } from 'react-dom';
 import { createStyles } from 'antd-style';
-import { useLocalStorageState } from 'ahooks';
 
 const useStyles = createStyles(({ token }) => {
   return {
@@ -58,9 +56,6 @@ const Lang = () => {
 
 const Login: React.FC = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
-  const [token, setToken] = useLocalStorageState<string | undefined>('TOKEN__', {
-    defaultValue: '',
-  });
   const { styles } = useStyles();
   const intl = useIntl();
 
@@ -80,7 +75,7 @@ const Login: React.FC = () => {
     try {
       // 登录
       const result = await authenticationControllerSignIn(values);
-      setToken(result.accessToken);
+      localStorage.setItem('TOKEN__', result.accessToken);
       const defaultLoginSuccessMessage = intl.formatMessage({
         id: 'pages.login.success',
         defaultMessage: '登录成功！',
@@ -91,7 +86,9 @@ const Login: React.FC = () => {
       history.push(urlParams.get('redirect') || '/');
       return;
     } catch (error: any) {
-      message.error(error.response.data.message);
+      if (error.response) {
+        message.error(error.response.data.message);
+      }
     }
   };
 
@@ -174,7 +171,6 @@ const Login: React.FC = () => {
           />
         </LoginForm>
       </div>
-      <Footer />
     </div>
   );
 };

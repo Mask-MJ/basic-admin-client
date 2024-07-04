@@ -1,6 +1,5 @@
 // https://umijs.org/config/
 import { defineConfig } from '@umijs/max';
-import { join } from 'path';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
@@ -76,7 +75,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'Ant Design Pro',
+  title: 'SaaS Admin',
   layout: {
     locale: true,
     ...defaultSettings,
@@ -137,8 +136,8 @@ export default defineConfig({
   openAPI: [
     {
       requestLibPath: "import { request } from '@umijs/max'",
-      // schemaPath: 'http://basic.data3oil.com/doc-json',
-      schemaPath: 'http://localhost:3000/doc-json',
+      schemaPath: 'http://basic.data3oil.com/doc-json',
+      // schemaPath: 'http://localhost:3000/doc-json',
       projectName: 'basic',
       // apiPrefix: 'process.env.API_PREFIX',
       mock: false,
