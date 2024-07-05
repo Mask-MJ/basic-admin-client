@@ -1,15 +1,10 @@
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
+import type { ProColumns } from '@ant-design/pro-components';
 import { PageContainer, ProTable } from '@ant-design/pro-components';
-import { message } from 'antd';
-import React, { useRef } from 'react';
+import { Button, message, Popconfirm } from 'antd';
+import React from 'react';
 import SetForm from './SetForm';
 import { userControllerRemove, userControllerFindAll } from '@/services/basic/yonghuguanli';
-
-/**
- * 删除节点
- *
- * @param selectedRows
- */
+import { FormattedMessage, useIntl } from '@umijs/max';
 
 const handleRemove = async (id: number) => {
   const hide = message.loading('正在删除');
@@ -26,33 +21,43 @@ const handleRemove = async (id: number) => {
 };
 
 const TableList: React.FC = () => {
-  const actionRef = useRef<ActionType>();
-  /** 国际化配置 */
-
+  const intl = useIntl();
+  const popconfirmTitle = intl.formatMessage({
+    id: 'component.table.action.delete.title',
+  });
   const columns: ProColumns<API.UserEntity>[] = [
     { title: '账号', dataIndex: 'account' },
     { title: '昵称', dataIndex: 'nickname' },
     {
-      title: '是否是管理员',
-      dataIndex: 'isAdmin',
-      hideInForm: true,
-      renderText: (val: boolean) => (val ? '是' : '否'),
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      // valueType: 'dateTime',
+      valueType: 'dateRange',
+      render: (_, record) => {
+        return <span>{record.createdAt.toString()} </span>;
+      },
+      search: {
+        transform: (value) => {
+          return {
+            'params[beginTime]': value[0],
+            'params[endTime]': value[1],
+          };
+        },
+      },
     },
+    { title: '更新时间', dataIndex: 'updatedAt', valueType: 'option' },
     {
       title: '操作',
-      dataIndex: 'option',
+      dataIndex: 'action',
       valueType: 'option',
       render: (_, record) => (
         <>
           <SetForm key="config" row={record} />
-          <a
-            key="subscribeAlert"
-            onClick={() => {
-              handleRemove(record.id);
-            }}
-          >
-            删除
-          </a>
+          <Popconfirm title={popconfirmTitle} onConfirm={() => handleRemove(record.id)}>
+            <Button type="link">
+              <FormattedMessage id="component.table.action.delete" />
+            </Button>
+          </Popconfirm>
         </>
       ),
     },
@@ -61,10 +66,7 @@ const TableList: React.FC = () => {
   return (
     <PageContainer>
       <ProTable<API.UserEntity, API.UserControllerFindAllParams>
-        headerTitle="用户管理"
-        actionRef={actionRef}
         rowKey="id"
-        search={{ labelWidth: 120 }}
         toolBarRender={() => [<SetForm key="primary" />]}
         request={userControllerFindAll}
         columns={columns}
